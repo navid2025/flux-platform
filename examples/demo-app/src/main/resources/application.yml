@@ -73,8 +73,25 @@ flux:
           WHERE id = :id
 
     # ------------------------------------------------------------------
+    # Kafka. Requires flux-connector-kafka on the classpath.
+    # The operation names the topic unless a "topic.<operation>" alias
+    # maps it to something else.
+    # ------------------------------------------------------------------
+    orders-out:
+      type: kafka
+      settings:
+        bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+        default-topic: flux.orders
+        # operation "publish" goes to orders.created instead of the default topic
+        topic.publish: orders.created
+        # anything under "producer." is passed to the Kafka producer
+        producer.acks: all
+        producer.enable.idempotence: "true"
+
+    # ------------------------------------------------------------------
     # A connector can be kept in configuration but switched off per
-    # environment. Useful when a peer is only reachable from production.
+    # environment. Useful when a peer is only reachable from production,
+    # or when a broker is not running locally during development.
     # ------------------------------------------------------------------
     legacy-erp:
       type: rest
