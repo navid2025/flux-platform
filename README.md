@@ -32,7 +32,7 @@ Adding a downstream system becomes a YAML change.
 
 ---
 
-## Quick start
+## Try it
 
 ```bash
 git clone https://github.com/navid2025/flux-platform.git
@@ -52,6 +52,87 @@ curl localhost:8080/demo/connectors
 # invoke a connector
 curl localhost:8080/demo/orders?status=PAID
 ```
+
+---
+
+## Using Flux in your own application
+
+One dependency. That is the whole installation.
+
+```xml
+<dependency>
+  <groupId>io.github.navidzare</groupId>
+  <artifactId>flux-spring-boot-starter</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+Then declare a connector and use it.
+
+**1. `application.yml`**
+
+```yaml
+flux:
+  connectors:
+    customer-api:
+      type: rest
+      base-url: https://api.example.com/v1
+      auth:
+        type: basic
+        settings:
+          username: ${CUSTOMER_API_USER}
+          password: ${CUSTOMER_API_PASSWORD}
+```
+
+**2. Inject the registry**
+
+```java
+@Service
+public class CustomerService {
+
+    private final ConnectorRegistry registry;
+
+    public CustomerService(ConnectorRegistry registry) {
+        this.registry = registry;
+    }
+
+    public ConnectorResponse lookup(long id) {
+        return registry.require("customer-api")
+                .execute(ConnectorRequest.of("getUser", Map.of("id", id)));
+    }
+}
+```
+
+No configuration class. No `@Bean`. The auto-configuration reads `flux.*` and registers
+everything before your beans are created.
+
+### Where the artifact comes from
+
+| Source | Status | Who it suits |
+|---|---|---|
+| **Build from source** | Works today | Anyone cloning the repo |
+| **JitPack** | Works once the repo is public | Anyone wanting a one-line dependency |
+| **Maven Central** | Not published | The long-term goal |
+
+**JitPack** builds straight from a GitHub tag and needs no publishing pipeline:
+
+```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
+<dependency>
+  <groupId>com.github.navid2025.flux-platform</groupId>
+  <artifactId>flux-spring-boot-starter</artifactId>
+  <version>v1.0.0</version>
+</dependency>
+```
+
+Maven Central is worth doing eventually, but it needs a signed release and a verified
+group ID. JitPack gets you a working, citable artifact in minutes.
 
 ---
 

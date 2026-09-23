@@ -15,6 +15,7 @@
   <modules>
     <module>flux-connector-core</module>
     <module>flux-starter-autoconfigure</module>
+    <module>flux-spring-boot-starter</module>
     <module>examples/demo-app</module>
   </modules>
 
@@ -43,6 +44,11 @@
       <dependency>
         <groupId>io.github.navidzare</groupId>
         <artifactId>flux-starter-autoconfigure</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.navidzare</groupId>
+        <artifactId>flux-spring-boot-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
