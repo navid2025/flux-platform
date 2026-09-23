@@ -1,0 +1,41 @@
+# Build output
+target/
+build/
+out/
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and runtime
+*.log
+logs/
+*.tmp
+
+# Local overrides - never commit real credentials
+application-local.yml
+application-local.yaml
+application-local.properties
+*-secret.yml
+*.pem
+*.jks
+*.p12
+
+# Tooling caches
+.claude/
+CLAUDE.md

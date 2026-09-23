@@ -1,0 +1,108 @@
+# ============================================================================
+#  Flux Platform - configuration reference
+#  Every connector the application needs is declared here. No Java required.
+# ============================================================================
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: flux-demo
+
+flux:
+
+  # Refuse to start if any connector cannot be initialised.
+  # Set to false in environments where a single unreachable peer should not
+  # take the whole application down.
+  fail-fast: true
+
+  connectors:
+
+    # ------------------------------------------------------------------
+    # A JSON HTTP API, authenticated with basic auth.
+    # Operations map onto URL suffixes: getUser -> GET /users/getUser
+    # ------------------------------------------------------------------
+    customer-api:
+      type: rest
+      base-url: https://api.example.com/v1
+      timeout: 5s
+      auth:
+        type: basic
+        settings:
+          username: ${CUSTOMER_API_USER:demo}
+          password: ${CUSTOMER_API_PASSWORD:demo}
+      settings:
+        retry-attempts: "3"
+        retry-backoff: "200ms"
+
+    # ------------------------------------------------------------------
+    # The same transport, but with an OAuth2 client-credentials token that
+    # Flux caches and refreshes automatically before it expires.
+    # ------------------------------------------------------------------
+    billing-api:
+      type: rest
+      base-url: https://billing.example.com/api
+      timeout: 8s
+      auth:
+        type: oauth2
+        settings:
+          client-id: ${BILLING_CLIENT_ID:demo}
+          client-secret: ${BILLING_CLIENT_SECRET:demo}
+          token-uri: https://auth.example.com/oauth2/token
+
+    # ------------------------------------------------------------------
+    # A relational database. SQL lives here rather than inside a mediation
+    # flow, so a DBA can review it without reading application code.
+    # Operation names are the suffix after "template.".
+    # ------------------------------------------------------------------
+    orders-db:
+      type: jdbc
+      settings:
+        # invoked as connector.execute(op="findByStatus", payload=[status: PAID])
+        template.findByStatus: >
+          SELECT id, customer_id, status, total_amount
+          FROM orders
+          WHERE status = :status
+          ORDER BY created_at DESC
+          LIMIT 100
+
+        template.findById: >
+          SELECT id, customer_id, status, total_amount, created_at
+          FROM orders
+          WHERE id = :id
+
+    # ------------------------------------------------------------------
+    # A connector can be kept in configuration but switched off per
+    # environment. Useful when a peer is only reachable from production.
+    # ------------------------------------------------------------------
+    legacy-erp:
+      type: rest
+      base-url: https://erp.internal.example.com/soap
+      enabled: false
+      timeout: 30s
+
+# ----------------------------------------------------------------------------
+#  Application logging. Flux logs every registration at INFO and every failure
+#  at ERROR with the connector name, so a noisy peer is easy to isolate.
+# ----------------------------------------------------------------------------
+logging:
+  level:
+    io.github.navidzare.flux: INFO
+    # Uncomment to see which strategies and connectors were resolved:
+    # io.github.navidzare.flux.autoconfigure: DEBUG
+
+# ----------------------------------------------------------------------------
+#  Actuator exposes the live connector list, which is the fastest way to
+#  confirm a deployment picked up its configuration.
+#     GET /actuator/health   -> overall status
+#     GET /actuator/info     -> build information
+# ----------------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
