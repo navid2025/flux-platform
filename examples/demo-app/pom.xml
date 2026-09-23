@@ -38,6 +38,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
+
+    <!-- optional connector types: pick only what the application needs -->
+    <dependency>
+      <groupId>io.github.navidzare</groupId>
+      <artifactId>flux-connector-kafka</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

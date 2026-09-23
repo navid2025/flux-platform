@@ -1,31 +1,37 @@
 package io.github.navidzare.flux.autoconfigure;
 
 import io.github.navidzare.flux.connector.Connector;
+import io.github.navidzare.flux.connector.ConnectorFactory;
 import io.github.navidzare.flux.connector.ConnectorProperties;
 import io.github.navidzare.flux.connector.ConnectorRegistry;
 import io.github.navidzare.flux.connector.auth.AuthenticationStrategy;
 import io.github.navidzare.flux.connector.auth.AuthenticationStrategyFactory;
 import io.github.navidzare.flux.connector.auth.BasicAuth;
 import io.github.navidzare.flux.connector.auth.OAuth2Auth;
-import io.github.navidzare.flux.connector.types.JdbcConnector;
-import io.github.navidzare.flux.connector.types.RestConnector;
+import io.github.navidzare.flux.connector.factory.JdbcConnectorFactory;
+import io.github.navidzare.flux.connector.factory.RestConnectorFactory;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Wires every connector declared under {@code flux.connectors} into the application context.
+ * Turns the {@code flux.connectors} block of application configuration into a populated
+ * {@link ConnectorRegistry}.
  *
- * <p>Applications get the registry as a bean and never construct connectors themselves.
- * Declaring a connector in YAML is the whole setup step.</p>
+ * <p>Connector types are discovered, not hard coded. Every {@link ConnectorFactory} bean in
+ * the context — including ones contributed by optional modules such as Kafka — is collected
+ * and indexed by its type name. Adding a connector type means adding a module, not editing
+ * this class.</p>
  */
 @AutoConfiguration
 @EnableConfigurationProperties(ConnectorProperties.class)
@@ -33,14 +39,7 @@ public class FluxAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FluxAutoConfiguration.class);
 
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationStrategyFactory authenticationStrategyFactory(
-            List<AuthenticationStrategy> discovered) {
-        AuthenticationStrategyFactory factory = new AuthenticationStrategyFactory(discovered);
-        log.debug("Authentication strategies available: {}", factory.registeredTypes());
-        return factory;
-    }
+    // ---- authentication -------------------------------------------------------
 
     @Bean
     @ConditionalOnMissingBean
@@ -56,9 +55,36 @@ public class FluxAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public AuthenticationStrategyFactory authenticationStrategyFactory(
+            List<AuthenticationStrategy> discovered) {
+        AuthenticationStrategyFactory factory = new AuthenticationStrategyFactory(discovered);
+        log.debug("Authentication strategies: {}", factory.registeredTypes());
+        return factory;
+    }
+
+    // ---- connector factories --------------------------------------------------
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RestConnectorFactory restConnectorFactory(AuthenticationStrategyFactory authentication) {
+        return new RestConnectorFactory(authentication);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public JdbcConnectorFactory jdbcConnectorFactory(ObjectProvider<JdbcTemplate> jdbcTemplates) {
+        return new JdbcConnectorFactory(jdbcTemplates);
+    }
+
+    // ---- registry -------------------------------------------------------------
+
+    @Bean
+    @ConditionalOnMissingBean
     public ConnectorRegistry connectorRegistry(ConnectorProperties properties,
-                                               AuthenticationStrategyFactory authFactory,
-                                               ObjectProvider<JdbcTemplate> jdbcTemplates) {
+                                               List<ConnectorFactory> factories) {
+
+        Map<String, ConnectorFactory> byType = indexByType(factories);
+        log.debug("Connector types available: {}", byType.keySet());
 
         ConnectorRegistry registry = new ConnectorRegistry();
 
@@ -68,8 +94,7 @@ public class FluxAutoConfiguration {
                 return;
             }
             try {
-                Connector connector = build(name, definition, authFactory, jdbcTemplates);
-                registry.register(connector);
+                registry.register(build(name, definition, byType));
             } catch (RuntimeException ex) {
                 String message = "Failed to initialise connector '%s'".formatted(name);
                 if (properties.isFailFast()) {
@@ -83,62 +108,55 @@ public class FluxAutoConfiguration {
         return registry;
     }
 
+    private Map<String, ConnectorFactory> indexByType(List<ConnectorFactory> factories) {
+        Map<String, ConnectorFactory> byType = new LinkedHashMap<>();
+        for (ConnectorFactory factory : factories) {
+            ConnectorFactory previous = byType.put(factory.type().toLowerCase(), factory);
+            if (previous != null) {
+                log.warn("Two factories claim connector type '{}'; using {}",
+                        factory.type(), factory.getClass().getName());
+            }
+        }
+        return byType;
+    }
+
     private Connector build(String name,
                             ConnectorProperties.Definition definition,
-                            AuthenticationStrategyFactory authFactory,
-                            ObjectProvider<JdbcTemplate> jdbcTemplates) {
+                            Map<String, ConnectorFactory> byType) {
 
         String type = definition.getType();
         if (type == null || type.isBlank()) {
-            throw new IllegalArgumentException("Connector '%s' has no type".formatted(name));
+            throw new IllegalArgumentException("Connector '%s' declares no type".formatted(name));
         }
 
-        return switch (type.toLowerCase()) {
-            case RestConnector.TYPE -> new RestConnector(
-                    name,
-                    definition.getBaseUrl(),
-                    definition.getTimeout(),
-                    authFactory.resolve(definition.getAuth().getType()).orElse(null),
-                    definition.getAuth().getSettings());
-
-            case JdbcConnector.TYPE -> new JdbcConnector(
-                    name,
-                    jdbcTemplates.getIfAvailable(() -> {
-                        throw new IllegalStateException(
-                                "Connector '%s' is jdbc but no JdbcTemplate is available"
-                                        .formatted(name));
-                    }),
-                    definition.getSettings());
-
-            default -> throw new IllegalArgumentException(
-                    "Unknown connector type '%s' for connector '%s'".formatted(type, name));
-        };
+        ConnectorFactory factory = byType.get(type.toLowerCase());
+        if (factory == null) {
+            throw new IllegalArgumentException(
+                    "No factory for connector type '%s' (connector '%s'). Available: %s"
+                            .formatted(type, name, byType.keySet()));
+        }
+        return factory.create(name, definition);
     }
 
-    /** Releases every connector when the context shuts down. */
+    /** Closes every connector on shutdown so pools and producers are released. */
     @Bean
-    @ConditionalOnClass(name = "jakarta.annotation.PreDestroy")
-    public FluxShutdownHook fluxShutdownHook(ConnectorRegistry registry) {
-        return new FluxShutdownHook(registry);
+    @ConditionalOnMissingBean
+    public FluxShutdown fluxShutdown(ConnectorRegistry registry) {
+        return new FluxShutdown(registry);
     }
 
-    static class FluxShutdownHook implements AutoCloseable {
+    static class FluxShutdown {
 
         private final ConnectorRegistry registry;
 
-        FluxShutdownHook(ConnectorRegistry registry) {
+        FluxShutdown(ConnectorRegistry registry) {
             this.registry = registry;
         }
 
-        @jakarta.annotation.PreDestroy
+        @PreDestroy
         public void shutdown() {
-            log.info("Shutting down {} connector(s)", registry.size());
+            log.info("Closing {} connector(s)", registry.size());
             registry.closeAll();
-        }
-
-        @Override
-        public void close() {
-            shutdown();
         }
     }
 }
