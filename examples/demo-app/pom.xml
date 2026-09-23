@@ -16,9 +16,10 @@
   <description>Sample application showing how a connector is declared and invoked.</description>
 
   <dependencies>
+    <!-- one dependency is all an application needs -->
     <dependency>
       <groupId>io.github.navidzare</groupId>
-      <artifactId>flux-starter-autoconfigure</artifactId>
+      <artifactId>flux-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
