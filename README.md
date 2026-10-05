@@ -43,7 +43,7 @@ cd examples/demo-app
 mvn spring-boot:run
 ```
 
-The demo starts an in-memory database and registers three connectors.
+The demo starts an in-memory database and registers four connectors.
 
 ```bash
 # what got registered
@@ -63,7 +63,7 @@ One dependency. That is the whole installation.
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -127,7 +127,7 @@ everything before your beans are created.
 <dependency>
   <groupId>com.github.navid2025.flux-platform</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
-  <version>v1.0.0</version>
+  <version>main-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -246,7 +246,7 @@ The registry is the only thing callers depend on. Everything below it is replace
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-connector-kafka</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -282,7 +282,7 @@ Anything under the `producer.` prefix is forwarded to the Kafka producer, so tun
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-bpmn-camunda</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
