@@ -4,6 +4,7 @@ import io.github.navidzare.flux.connector.Connector;
 import io.github.navidzare.flux.connector.ConnectorRequest;
 import io.github.navidzare.flux.connector.ConnectorResponse;
 import io.github.navidzare.flux.connector.exception.ConnectorException;
+import io.github.navidzare.flux.connector.support.Json;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -25,8 +27,9 @@ import java.util.stream.Collectors;
  * <p>The connector resolves its target topic in three steps, first match wins:</p>
  * <ol>
  *   <li>a {@code topic.<operation>} entry in its settings</li>
- *   <li>otherwise the operation name is used as the topic</li>
- *   <li>falling back to {@code default-topic} if one is configured</li>
+ *   <li>{@code default-topic}, when the operation is the generic {@code send} or
+ *       {@code publish}</li>
+ *   <li>otherwise the operation name is the topic</li>
  * </ol>
  *
  * <pre>
@@ -56,6 +59,7 @@ public class KafkaConnector implements Connector {
     private final String defaultTopic;
     private final Duration sendTimeout;
     private final KafkaTemplate<String, String> template;
+    private final AtomicBoolean closed = new AtomicBoolean();
 
     public KafkaConnector(String name, Map<String, String> settings) {
         this.name = name;
@@ -85,7 +89,7 @@ public class KafkaConnector implements Connector {
     public ConnectorResponse execute(ConnectorRequest request) {
         String topic = resolveTopic(request.operation());
         String key = resolveKey(request);
-        String value = toJson(request.payload());
+        String value = Json.write(request.payload());
         long started = System.nanoTime();
 
         try {
@@ -114,12 +118,15 @@ public class KafkaConnector implements Connector {
 
     @Override
     public void close() {
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
         template.flush();
         template.destroy();
         log.debug("Kafka connector '{}' closed", name);
     }
 
-    private String resolveTopic(String operation) {
+    String resolveTopic(String operation) {
         String alias = topicAliases.get(operation);
         if (alias != null) {
             return alias;
@@ -135,7 +142,7 @@ public class KafkaConnector implements Connector {
         return "send".equalsIgnoreCase(operation) || "publish".equalsIgnoreCase(operation);
     }
 
-    private String resolveKey(ConnectorRequest request) {
+    String resolveKey(ConnectorRequest request) {
         Object key = request.payload().get("key");
         if (key != null) {
             return key.toString();
@@ -170,16 +177,5 @@ public class KafkaConnector implements Connector {
                     name, value, fallback);
             return fallback;
         }
-    }
-
-    /** Minimal JSON writer, matching the core so the module stays dependency free. */
-    private String toJson(Map<String, Object> payload) {
-        return payload.entrySet().stream()
-                .map(e -> "\"%s\":\"%s\"".formatted(e.getKey(), escape(String.valueOf(e.getValue()))))
-                .collect(Collectors.joining(",", "{", "}"));
-    }
-
-    private String escape(String value) {
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
