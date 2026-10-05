@@ -23,4 +23,3 @@ public class FluxKafkaAutoConfiguration {
         return new KafkaConnectorFactory();
     }
 }
-
