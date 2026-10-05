@@ -1,5 +1,7 @@
 # Flux Platform
 
+[![build](https://github.com/navid2025/flux-platform/actions/workflows/build.yml/badge.svg)](https://github.com/navid2025/flux-platform/actions/workflows/build.yml)
+
 A small ESB development platform for Spring Boot.
 
 Declare your downstream systems in `application.yml`, and the platform gives you a
