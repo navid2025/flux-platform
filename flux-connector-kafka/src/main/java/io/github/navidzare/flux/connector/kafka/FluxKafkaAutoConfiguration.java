@@ -1,6 +1,5 @@
 package io.github.navidzare.flux.connector.kafka;
 
-import io.github.navidzare.flux.connector.ConnectorFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,8 +18,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 public class FluxKafkaAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
-    public ConnectorFactory kafkaConnectorFactory() {
+    @ConditionalOnMissingBean(KafkaConnectorFactory.class)
+    public KafkaConnectorFactory kafkaConnectorFactory() {
         return new KafkaConnectorFactory();
     }
 }
+
