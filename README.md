@@ -162,6 +162,7 @@ flux:
       auth:
         type: oauth2
         settings:
+          token-uri: ${BILLING_TOKEN_URI}
           client-id: ${BILLING_CLIENT_ID}
           client-secret: ${BILLING_CLIENT_SECRET}
 
