@@ -314,8 +314,14 @@ variable as a parameter, and publishes the result back:
 | `connectorError` | error message on failure |
 | `connectorDurationMs` | how long the call took |
 
-A gateway can branch on `connectorSuccess` directly. To route failures through an error
-boundary event instead, subclass `ConnectorDelegate` and set `throwOnFailure`.
+A gateway can branch on `connectorSuccess` directly. A connector that fails, whether it
+returns a failed response or throws, still writes those variables and lets the process
+continue. To route failures through an error boundary event instead, subclass
+`ConnectorDelegate` and set `throwOnFailure`.
+
+One Camunda rule worth knowing: the engine refuses to deploy a process that does not declare
+`camunda:historyTimeToLive`, so set it on the process element (or configure a default on the
+engine) before your first deployment.
 
 `BaseBpmnDelegate` is there for tasks that need more than a straight call — reshaping
 parameters, choosing between connectors, or interpreting a response.

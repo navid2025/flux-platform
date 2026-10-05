@@ -4,12 +4,14 @@ import io.github.navidzare.flux.connector.Connector;
 import io.github.navidzare.flux.connector.ConnectorRegistry;
 import io.github.navidzare.flux.connector.ConnectorRequest;
 import io.github.navidzare.flux.connector.ConnectorResponse;
+import io.github.navidzare.flux.connector.exception.ConnectorException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,9 +43,10 @@ import java.util.Map;
  * <p><b>Results.</b> The response is published back as process variables — see
  * {@link DelegateVariables}. A model can branch on {@code connectorSuccess} directly.</p>
  *
- * <p><b>Failures.</b> By default a failed call sets the variables and lets the process
- * continue, so the model decides what to do. Set {@link #setThrowOnFailure(boolean)} to
- * raise a {@link BpmnError} instead and route it through an error boundary event.</p>
+ * <p><b>Failures.</b> A connector that fails, whether it returns a failed response or
+ * throws {@link ConnectorException}, sets the variables and lets the process continue so
+ * the model decides what to do. Set {@link #setThrowOnFailure(boolean)} to raise a
+ * {@link BpmnError} instead and route it through an error boundary event.</p>
  */
 public class ConnectorDelegate implements JavaDelegate {
 
@@ -68,8 +71,18 @@ public class ConnectorDelegate implements JavaDelegate {
         log.debug("Process '{}' task '{}' -> {}.{}",
                 execution.getProcessInstanceId(), activity, connectorName, operation);
 
-        Connector connector = registry.require(connectorName);
-        ConnectorResponse response = connector.execute(new ConnectorRequest(operation, params, Map.of()));
+        ConnectorResponse response;
+        try {
+            Connector connector = registry.require(connectorName);
+            response = connector.execute(new ConnectorRequest(operation, params, Map.of()));
+        } catch (ConnectorException ex) {
+            // A connector reports failure either by returning a failed response or by
+            // throwing. Fold the throwing case into the same shape so a model can treat
+            // them identically instead of tripping over an engine incident.
+            log.warn("Connector '{}.{}' threw for process '{}': {}",
+                    connectorName, operation, execution.getProcessInstanceId(), ex.getMessage());
+            response = ConnectorResponse.failure(0, ex.getMessage(), Duration.ZERO);
+        }
 
         publish(execution, response);
 
