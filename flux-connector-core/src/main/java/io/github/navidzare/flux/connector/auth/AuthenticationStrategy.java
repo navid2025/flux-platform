@@ -21,6 +21,16 @@ public interface AuthenticationStrategy {
      */
     Map<String, String> apply(Map<String, String> settings);
 
+    /**
+     * Checks the strategy has everything it needs. Called while the connector is being
+     * built, so a missing setting fails at startup rather than on the first call.
+     *
+     * @param settings connector level settings, already resolved from configuration
+     * @throws IllegalArgumentException when a required setting is absent
+     */
+    default void validate(Map<String, String> settings) {
+    }
+
     /** Whether this strategy needs to refresh credentials periodically. */
     default boolean requiresRefresh() {
         return false;

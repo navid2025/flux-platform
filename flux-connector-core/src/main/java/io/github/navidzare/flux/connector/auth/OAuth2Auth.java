@@ -66,6 +66,19 @@ public class OAuth2Auth implements AuthenticationStrategy {
     }
 
     @Override
+    public void validate(Map<String, String> settings) {
+        if (first(settings, "token-uri", "token-url", "tokenUrl").isBlank()) {
+            throw new IllegalArgumentException("oauth2 requires a 'token-uri'");
+        }
+        if (first(settings, "client-id", "clientId").isBlank()) {
+            throw new IllegalArgumentException("oauth2 requires a 'client-id'");
+        }
+        if (first(settings, "client-secret", "clientSecret").isBlank()) {
+            throw new IllegalArgumentException("oauth2 requires a 'client-secret'");
+        }
+    }
+
+    @Override
     public boolean requiresRefresh() {
         return true;
     }

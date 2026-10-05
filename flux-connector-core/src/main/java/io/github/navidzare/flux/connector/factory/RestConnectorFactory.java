@@ -22,9 +22,14 @@ public class RestConnectorFactory implements ConnectorFactory {
 
     @Override
     public Connector create(String name, ConnectorProperties.Definition definition) {
+        String baseUrl = definition.getBaseUrl();
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Connector '%s' is type 'rest' and needs a base-url".formatted(name));
+        }
         return new RestConnector(
                 name,
-                definition.getBaseUrl(),
+                baseUrl,
                 definition.getTimeout(),
                 authentication.resolve(definition.getAuth().getType()).orElse(null),
                 definition.getAuth().getSettings());

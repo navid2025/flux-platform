@@ -57,6 +57,9 @@ public class RestConnector implements Connector {
         this.authSettings = authSettings == null
                 ? Map.of()
                 : Collections.unmodifiableMap(new HashMap<>(authSettings));
+        if (auth != null) {
+            auth.validate(this.authSettings);
+        }
         this.client = HttpClient.newBuilder()
                 .connectTimeout(this.timeout)
                 .followRedirects(HttpClient.Redirect.NEVER)

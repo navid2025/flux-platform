@@ -26,4 +26,17 @@ public class BasicAuth implements AuthenticationStrategy {
 
         return Map.of("Authorization", "Basic " + token);
     }
+
+    @Override
+    public void validate(Map<String, String> settings) {
+        require(settings, "username");
+        require(settings, "password");
+    }
+
+    private static void require(Map<String, String> settings, String key) {
+        String value = settings.get(key);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("basic auth requires a '" + key + "'");
+        }
+    }
 }
