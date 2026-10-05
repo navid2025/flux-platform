@@ -30,8 +30,8 @@ flux:
       auth:
         type: basic
         settings:
-          username: ${CUSTOMER_API_USER:demo}
-          password: ${CUSTOMER_API_PASSWORD:demo}
+          username: ${CUSTOMER_API_USER}
+          password: ${CUSTOMER_API_PASSWORD}
 
     # ------------------------------------------------------------------
     # The same transport, but with an OAuth2 client-credentials token that
@@ -44,9 +44,9 @@ flux:
       auth:
         type: oauth2
         settings:
-          client-id: ${BILLING_CLIENT_ID:demo}
-          client-secret: ${BILLING_CLIENT_SECRET:demo}
-          token-uri: https://auth.example.com/oauth2/token
+          client-id: ${BILLING_CLIENT_ID}
+          client-secret: ${BILLING_CLIENT_SECRET}
+          token-uri: ${BILLING_TOKEN_URI:https://auth.example.com/oauth2/token}
 
     # ------------------------------------------------------------------
     # A relational database. SQL lives here rather than inside a mediation
