@@ -115,7 +115,11 @@ class RestConnectorTest {
         connector().execute(new ConnectorRequest("createUser", payload, Map.of("X-Flux-Method", "POST")));
 
         assertThat(lastMethod.get()).isEqualTo("POST");
-        assertThat(lastBody.get()).isEqualTo("{\"id\":1,\"name\":\"Ada\"}");
+        // Map.copyOf does not preserve order, so assert on content rather than the exact text.
+        assertThat(lastBody.get())
+                .startsWith("{").endsWith("}")
+                .contains("\"id\":1")
+                .contains("\"name\":\"Ada\"");
     }
 
     @Test
