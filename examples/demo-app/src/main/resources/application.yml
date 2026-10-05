@@ -32,9 +32,6 @@ flux:
         settings:
           username: ${CUSTOMER_API_USER:demo}
           password: ${CUSTOMER_API_PASSWORD:demo}
-      settings:
-        retry-attempts: "3"
-        retry-backoff: "200ms"
 
     # ------------------------------------------------------------------
     # The same transport, but with an OAuth2 client-credentials token that
