@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,15 +23,21 @@ public class ConnectorRegistry {
 
     private final Map<String, Connector> connectors = new ConcurrentHashMap<>();
 
-    /** Registers a connector, replacing any previous registration under the same name. */
+    /**
+     * Registers a connector, replacing any previous registration under the same name.
+     *
+     * <p>The connector is initialised before it becomes visible, so a lookup can never
+     * return one that is still being set up. If initialisation fails the previous
+     * registration, if any, is left in place.</p>
+     */
     public void register(Connector connector) {
         String name = connector.name();
+        connector.initialise();
         Connector previous = connectors.put(name, connector);
         if (previous != null) {
             log.warn("Connector '{}' was replaced", name);
             closeQuietly(previous);
         }
-        connector.initialise();
         log.info("Registered connector '{}' ({})", name, connector.type());
     }
 
@@ -56,8 +62,9 @@ public class ConnectorRegistry {
         return connector;
     }
 
+    /** A snapshot of the registered names, safe to iterate while registrations change. */
     public Collection<String> names() {
-        return Collections.unmodifiableSet(connectors.keySet());
+        return Set.copyOf(connectors.keySet());
     }
 
     public int size() {

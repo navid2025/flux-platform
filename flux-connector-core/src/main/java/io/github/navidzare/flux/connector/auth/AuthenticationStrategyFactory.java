@@ -1,9 +1,9 @@
 package io.github.navidzare.flux.connector.auth;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Resolves an {@link AuthenticationStrategy} from its configured name.
@@ -15,7 +15,7 @@ public class AuthenticationStrategyFactory {
 
     private static final String NONE = "none";
 
-    private final Map<String, AuthenticationStrategy> strategies = new HashMap<>();
+    private final Map<String, AuthenticationStrategy> strategies = new ConcurrentHashMap<>();
 
     public AuthenticationStrategyFactory(List<AuthenticationStrategy> discovered) {
         discovered.forEach(s -> strategies.put(s.type().toLowerCase(), s));
