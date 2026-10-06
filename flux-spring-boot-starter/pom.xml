@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.github.navidzare</groupId>
+    <groupId>io.github.navidzaare</groupId>
     <artifactId>flux-platform</artifactId>
     <version>0.1.0</version>
     <relativePath>../pom.xml</relativePath>
@@ -20,11 +20,11 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.navidzare</groupId>
+      <groupId>io.github.navidzaare</groupId>
       <artifactId>flux-connector-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.navidzare</groupId>
+      <groupId>io.github.navidzaare</groupId>
       <artifactId>flux-starter-autoconfigure</artifactId>
     </dependency>
     <dependency>

@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.github.navidzare</groupId>
+  <groupId>io.github.navidzaare</groupId>
   <artifactId>flux-platform</artifactId>
   <version>0.1.0</version>
   <packaging>pom</packaging>
 
   <name>Flux Platform</name>
   <description>A lightweight, Spring Boot based ESB development platform.</description>
-  <url>https://github.com/navid2025/flux-platform</url>
+  <url>https://github.com/navidzaare/flux-platform</url>
 
   <modules>
     <module>flux-connector-core</module>
@@ -41,27 +41,27 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>io.github.navidzare</groupId>
+        <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-connector-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.github.navidzare</groupId>
+        <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-starter-autoconfigure</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.github.navidzare</groupId>
+        <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-spring-boot-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.github.navidzare</groupId>
+        <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-connector-kafka</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.github.navidzare</groupId>
+        <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-bpmn-camunda</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -114,16 +114,16 @@
 
   <developers>
     <developer>
-      <id>navid2025</id>
-      <name>Navid Zare</name>
-      <url>https://github.com/navid2025</url>
+      <id>navidzaare</id>
+      <name>Navid Zaare</name>
+      <url>https://github.com/navidzaare</url>
     </developer>
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/navid2025/flux-platform.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/navid2025/flux-platform.git</developerConnection>
-    <url>https://github.com/navid2025/flux-platform</url>
+    <connection>scm:git:https://github.com/navidzaare/flux-platform.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/navidzaare/flux-platform.git</developerConnection>
+    <url>https://github.com/navidzaare/flux-platform</url>
     <tag>HEAD</tag>
   </scm>
 </project>

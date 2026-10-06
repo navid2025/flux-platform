@@ -42,5 +42,5 @@ First release.
 - No connector generation from OpenAPI or WSDL.
 - The Kafka connector publishes only; it does not consume.
 
-[Unreleased]: https://github.com/navid2025/flux-platform/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/navid2025/flux-platform/releases/tag/v0.1.0
+[Unreleased]: https://github.com/navidzaare/flux-platform/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/navidzaare/flux-platform/releases/tag/v0.1.0

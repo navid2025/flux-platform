@@ -10,7 +10,7 @@ shape of a change than to rework a pull request.
 ## Build and test
 
 ```bash
-git clone https://github.com/navid2025/flux-platform.git
+git clone https://github.com/navidzaare/flux-platform.git
 cd flux-platform
 ./mvnw clean verify
 ```

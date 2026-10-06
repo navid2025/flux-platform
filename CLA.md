@@ -1,6 +1,6 @@
 # Contributor License Agreement
 
-Thank you for contributing to Flux Platform ("the Project"), maintained by Navid Zare
+Thank you for contributing to Flux Platform ("the Project"), maintained by Navid Zaare
 ("the Maintainer").
 
 By submitting a contribution — a pull request, a patch, or any other material — you accept

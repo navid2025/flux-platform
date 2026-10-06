@@ -1,6 +1,6 @@
 # Flux Platform
 
-[![build](https://github.com/navid2025/flux-platform/actions/workflows/build.yml/badge.svg)](https://github.com/navid2025/flux-platform/actions/workflows/build.yml)
+[![build](https://github.com/navidzaare/flux-platform/actions/workflows/build.yml/badge.svg)](https://github.com/navidzaare/flux-platform/actions/workflows/build.yml)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 A small ESB development platform for Spring Boot.
@@ -38,7 +38,7 @@ Adding a downstream system becomes a YAML change.
 ## Try it
 
 ```bash
-git clone https://github.com/navid2025/flux-platform.git
+git clone https://github.com/navidzaare/flux-platform.git
 cd flux-platform
 ./mvnw clean install
 
@@ -64,7 +64,7 @@ One dependency. That is the whole installation.
 
 ```xml
 <dependency>
-  <groupId>io.github.navidzare</groupId>
+  <groupId>io.github.navidzaare</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
   <version>0.1.0</version>
 </dependency>
@@ -128,7 +128,7 @@ everything before your beans are created.
 </repositories>
 
 <dependency>
-  <groupId>com.github.navid2025.flux-platform</groupId>
+  <groupId>com.github.navidzaare.flux-platform</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
   <version>v0.1.0</version>
 </dependency>
@@ -248,7 +248,7 @@ The registry is the only thing callers depend on. Everything below it is replace
 
 ```xml
 <dependency>
-  <groupId>io.github.navidzare</groupId>
+  <groupId>io.github.navidzaare</groupId>
   <artifactId>flux-connector-kafka</artifactId>
   <version>0.1.0</version>
 </dependency>
@@ -284,7 +284,7 @@ Anything under the `producer.` prefix is forwarded to the Kafka producer, so tun
 
 ```xml
 <dependency>
-  <groupId>io.github.navidzare</groupId>
+  <groupId>io.github.navidzaare</groupId>
   <artifactId>flux-bpmn-camunda</artifactId>
   <version>0.1.0</version>
 </dependency>

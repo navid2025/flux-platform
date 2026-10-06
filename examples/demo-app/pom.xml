@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.github.navidzare</groupId>
+    <groupId>io.github.navidzaare</groupId>
     <artifactId>flux-platform</artifactId>
     <version>0.1.0</version>
     <relativePath>../../pom.xml</relativePath>
@@ -18,7 +18,7 @@
   <dependencies>
     <!-- one dependency is all an application needs -->
     <dependency>
-      <groupId>io.github.navidzare</groupId>
+      <groupId>io.github.navidzaare</groupId>
       <artifactId>flux-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
@@ -41,7 +41,7 @@
 
     <!-- optional connector types: pick only what the application needs -->
     <dependency>
-      <groupId>io.github.navidzare</groupId>
+      <groupId>io.github.navidzaare</groupId>
       <artifactId>flux-connector-kafka</artifactId>
     </dependency>
   </dependencies>

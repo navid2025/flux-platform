@@ -4,7 +4,7 @@
 
 Please do not open a public issue for a security problem.
 
-Use GitHub's [private vulnerability reporting](https://github.com/navid2025/flux-platform/security/advisories/new),
+Use GitHub's [private vulnerability reporting](https://github.com/navidzaare/flux-platform/security/advisories/new),
 or email the maintainer using the address on their GitHub profile.
 
 Include what you can:

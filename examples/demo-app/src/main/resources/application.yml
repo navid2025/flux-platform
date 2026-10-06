@@ -102,9 +102,9 @@ flux:
 # ----------------------------------------------------------------------------
 logging:
   level:
-    io.github.navidzare.flux: INFO
+    io.github.navidzaare.flux: INFO
     # Uncomment to see which strategies and connectors were resolved:
-    # io.github.navidzare.flux.autoconfigure: DEBUG
+    # io.github.navidzaare.flux.autoconfigure: DEBUG
 
 # ----------------------------------------------------------------------------
 #  Actuator exposes the live connector list, which is the fastest way to
