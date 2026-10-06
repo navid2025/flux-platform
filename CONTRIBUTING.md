@@ -1,0 +1,74 @@
+# Contributing
+
+Thanks for taking the time. This is a small project, so the process is small too.
+
+## Before you start
+
+For anything larger than a bug fix, open an issue first. It is cheaper to agree on the
+shape of a change than to rework a pull request.
+
+## Build and test
+
+```bash
+git clone https://github.com/navid2025/flux-platform.git
+cd flux-platform
+./mvnw clean verify
+```
+
+The build runs every module's tests. It has to be green before a pull request is reviewed.
+
+## Project layout
+
+| Module | Responsibility |
+|---|---|
+| `flux-connector-core` | `Connector` contract, registry, REST and JDBC connectors, auth strategies |
+| `flux-connector-kafka` | Kafka connector |
+| `flux-bpmn-camunda` | BPMN delegates for Camunda 7 |
+| `flux-starter-autoconfigure` | Reads `flux.*` and registers the beans |
+| `flux-spring-boot-starter` | The single dependency applications add |
+| `examples/demo-app` | A running example |
+
+## Adding a connector type
+
+The core does not need to change. Implement `Connector`, then declare a `ConnectorFactory`
+bean:
+
+```java
+@Bean
+public ConnectorFactory amqpConnectorFactory() {
+    return new ConnectorFactory() {
+        public String type() { return "amqp"; }
+        public Connector create(String name, ConnectorProperties.Definition definition) {
+            return new AmqpConnector(name, definition.getSettings());
+        }
+    };
+}
+```
+
+`type: amqp` works from that point on. If it is generally useful, a separate module is
+preferred over a change to core — that is how `flux-connector-kafka` sits outside.
+
+## What a good change looks like
+
+- **Tests.** Every bug fix gets a test that fails without it. New behaviour gets a test that
+  describes it.
+- **No new dependencies in core.** `flux-connector-core` stays free of JSON libraries, HTTP
+  clients beyond the JDK, and anything else that would make it heavier than it needs to be.
+- **Configuration over code.** A new tunable belongs in `flux.*` settings, not in a constant.
+- **Comments explain why.** The code says what it does. A comment earns its place by
+  explaining a decision that is not obvious from reading it.
+
+## Style
+
+Match what is already there. Four spaces, no wildcard imports, `var` only where the type is
+on the same line. Test method names read as sentences: `refusesAnOperationThatWouldEscapeThePath`.
+
+## Pull requests
+
+One change per pull request. Describe what problem it solves and how you verified it — a
+command and its output is worth more than a paragraph.
+
+## Licence
+
+Contributions are accepted under the MIT Licence, the same terms as the project. By opening a
+pull request you confirm you have the right to submit the work under those terms.

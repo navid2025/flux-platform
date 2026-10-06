@@ -1,6 +1,7 @@
 # Flux Platform
 
 [![build](https://github.com/navid2025/flux-platform/actions/workflows/build.yml/badge.svg)](https://github.com/navid2025/flux-platform/actions/workflows/build.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A small ESB development platform for Spring Boot.
 
@@ -39,10 +40,10 @@ Adding a downstream system becomes a YAML change.
 ```bash
 git clone https://github.com/navid2025/flux-platform.git
 cd flux-platform
-mvn clean install
+./mvnw clean install
 
 cd examples/demo-app
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 The demo starts an in-memory database and registers four connectors.
@@ -65,7 +66,7 @@ One dependency. That is the whole installation.
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
@@ -129,7 +130,7 @@ everything before your beans are created.
 <dependency>
   <groupId>com.github.navid2025.flux-platform</groupId>
   <artifactId>flux-spring-boot-starter</artifactId>
-  <version>main-SNAPSHOT</version>
+  <version>v0.1.0</version>
 </dependency>
 ```
 
@@ -249,7 +250,7 @@ The registry is the only thing callers depend on. Everything below it is replace
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-connector-kafka</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
@@ -285,7 +286,7 @@ Anything under the `producer.` prefix is forwarded to the Kafka producer, so tun
 <dependency>
   <groupId>io.github.navidzare</groupId>
   <artifactId>flux-bpmn-camunda</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
@@ -368,8 +369,8 @@ outside the core.
 
 ## Project status
 
-Version 1.0.0-SNAPSHOT. The core, Kafka and Camunda modules are built and green. What is
-deliberately not here yet:
+Version 0.1.0. The core, Kafka and Camunda modules are built and tested. What is deliberately
+not here yet:
 
 - **Retry and circuit breaking.** Timeouts are enforced; retries are not. Wrap calls at the
   call site until this lands.
@@ -379,6 +380,9 @@ deliberately not here yet:
   registry yet.
 - **Connector generation.** The idea of generating a connector from an OpenAPI document is
   not built. It remains the most interesting thing on the list.
+- **A Kafka consumer.** The Kafka connector publishes only.
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed in each release.
 
 ---
 
@@ -386,8 +390,17 @@ deliberately not here yet:
 
 - Java 17 or newer
 - Spring Boot 3.3 or newer
-- Maven 3.9+
 - Camunda 7.22 (only for `flux-bpmn-camunda`)
+
+Maven is not required — the wrapper is checked in. Use `./mvnw` instead of `mvn`.
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Security problems go through
+[SECURITY.md](SECURITY.md), not the public issue tracker.
 
 ---
 
