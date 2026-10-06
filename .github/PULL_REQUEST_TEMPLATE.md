@@ -11,6 +11,7 @@ against the demo app is fine too.
 
 - [ ] `./mvnw clean verify` passes
 - [ ] A test covers the change (a bug fix gets a test that fails without it)
+- [ ] I have read and accept [CLA.md](../CLA.md)
 - [ ] No new dependency added to `flux-connector-core`
 - [ ] New tunables are configuration, not constants in code
 - [ ] Documentation updated if behaviour or configuration changed

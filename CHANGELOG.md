@@ -5,7 +5,11 @@ While the version is below 1.0.0, the API may still change between minor release
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- Relicensed from MIT to the Apache License 2.0. Both are permissive; Apache 2.0 adds an
+  explicit patent grant, which enterprise buyers look for. Releases published under MIT keep
+  their MIT terms.
 
 ## [0.1.0] — 2026-10-06
 

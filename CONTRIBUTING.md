@@ -68,7 +68,19 @@ on the same line. Test method names read as sentences: `refusesAnOperationThatWo
 One change per pull request. Describe what problem it solves and how you verified it — a
 command and its output is worth more than a paragraph.
 
-## Licence
+## Licence and the Contributor License Agreement
 
-Contributions are accepted under the MIT Licence, the same terms as the project. By opening a
-pull request you confirm you have the right to submit the work under those terms.
+The project is licensed under the Apache License 2.0. Contributions come in under the same terms.
+
+Before a contribution can be merged, you also need to accept the
+[Contributor License Agreement](CLA.md). You keep the copyright to your work — the CLA grants
+the maintainer the right to distribute it, including under different licence terms later.
+
+Until signing is automated, state it in your pull request:
+
+> I have read and accept CLA.md
+
+That is enough for now. The
+[CLA Assistant](https://github.com/contributor-assistant/github-action) action takes over once
+there are regular contributors; it records signatures in a separate branch and needs a
+personal access token stored as a repository secret.

@@ -1,7 +1,7 @@
 # Flux Platform
 
 [![build](https://github.com/navid2025/flux-platform/actions/workflows/build.yml/badge.svg)](https://github.com/navid2025/flux-platform/actions/workflows/build.yml)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 A small ESB development platform for Spring Boot.
 
@@ -406,4 +406,4 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
