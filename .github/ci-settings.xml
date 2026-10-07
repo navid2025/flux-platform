@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven settings used only by the release workflow.
+
+  It declares no repositories on purpose: a GitHub runner reaches Maven Central
+  directly, so the only thing needed here is the Central Portal token, keyed by the
+  same id the publishing plugin names in publishingServerId.
+
+  The token is generated at https://central.sonatype.com under Account -> User Token.
+  It is not the account password.
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <servers>
+    <server>
+      <id>central</id>
+      <username>${env.CENTRAL_TOKEN_USERNAME}</username>
+      <password>${env.CENTRAL_TOKEN_PASSWORD}</password>
+    </server>
+  </servers>
+
+</settings>

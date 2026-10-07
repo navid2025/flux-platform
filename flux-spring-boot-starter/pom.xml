@@ -32,4 +32,22 @@
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!--
+        This module has no classes to document - only a package description - so
+        javadoc reports "No public or protected classes found" and would fail the
+        release. Tolerating that here keeps the failure intact everywhere else, where
+        a javadoc error means something is actually wrong.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

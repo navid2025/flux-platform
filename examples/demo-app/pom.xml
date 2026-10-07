@@ -15,6 +15,11 @@
   <name>Flux Demo Application</name>
   <description>Sample application showing how a connector is declared and invoked.</description>
 
+  <properties>
+    <!-- An example, not a library. Keep it out of any release bundle. -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <!-- one dependency is all an application needs -->
     <dependency>
