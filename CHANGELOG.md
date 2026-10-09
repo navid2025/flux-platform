@@ -5,11 +5,21 @@ While the version is below 1.0.0, the API may still change between minor release
 
 ## [Unreleased]
 
+### Added
+
+- `flux-connector-soap`: calls a SOAP service from its WSDL. The WSDL is read once at
+  start-up, an operation is addressed by name, and the payload becomes the children of the
+  operation's request element. SOAP faults and unknown operations come back as failed
+  responses rather than exceptions, so a mediation flow can branch on them. Both SOAP 1.1
+  and 1.2 are supported, and the `endpoint` setting overrides a stale `soap:address`.
+
 ### Changed
 
 - Relicensed from MIT to the Apache License 2.0. Both are permissive; Apache 2.0 adds an
   explicit patent grant, which enterprise buyers look for. Releases published under MIT keep
   their MIT terms.
+- `CONTRIBUTING.md` now documents the branch-and-pull-request workflow, which it had left
+  implied.
 
 ## [0.1.0] — 2026-10-06
 

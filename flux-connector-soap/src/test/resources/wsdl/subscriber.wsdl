@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/subscriber"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             targetNamespace="http://example.com/subscriber"
+             name="SubscriberService">
+
+  <types>
+    <xsd:schema targetNamespace="http://example.com/subscriber" elementFormDefault="qualified">
+      <xsd:element name="GetSubscriber">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="msisdn" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetSubscriberResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="status" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+
+  <message name="GetSubscriberRequest">
+    <part name="parameters" element="tns:GetSubscriber"/>
+  </message>
+  <message name="GetSubscriberResponse">
+    <part name="parameters" element="tns:GetSubscriberResponse"/>
+  </message>
+
+  <portType name="SubscriberPortType">
+    <operation name="GetSubscriber">
+      <input message="tns:GetSubscriberRequest"/>
+      <output message="tns:GetSubscriberResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="SubscriberBinding" type="tns:SubscriberPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetSubscriber">
+      <soap:operation soapAction="http://example.com/subscriber/GetSubscriber"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="SubscriberService">
+    <port name="SubscriberPort" binding="tns:SubscriberBinding">
+      <soap:address location="http://localhost:18080/subscriber"/>
+    </port>
+  </service>
+</definitions>

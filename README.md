@@ -227,6 +227,7 @@ Credentials are read from environment variables. Nothing secret belongs in this 
 |---|---|
 | `flux-connector-core` | Connector contract, registry, REST and JDBC connectors, auth strategies |
 | `flux-connector-kafka` | Kafka connector — optional |
+| `flux-connector-soap` | SOAP connector, driven by a WSDL — optional |
 | `flux-bpmn-camunda` | BPMN delegates for Camunda 7 — optional |
 | `flux-starter-autoconfigure` | Reads `flux.*` properties and registers the beans |
 | `flux-spring-boot-starter` | The single dependency applications add |
@@ -241,6 +242,7 @@ The registry is the only thing callers depend on. Everything below it is replace
 | `rest` | core | the operation names the URL suffix |
 | `jdbc` | core | the operation names a SQL template |
 | `kafka` | `flux-connector-kafka` | the operation names a topic, or `send` / `publish` for the default topic |
+| `soap` | `flux-connector-soap` | the operation names a WSDL operation |
 
 ---
 
@@ -277,6 +279,63 @@ actually persisted. The response body carries the topic, partition and offset.
 
 Anything under the `producer.` prefix is forwarded to the Kafka producer, so tuning `acks`,
 `compression.type` or `linger.ms` never needs a code change.
+
+---
+
+## SOAP
+
+```xml
+<dependency>
+  <groupId>io.github.navidzaare</groupId>
+  <artifactId>flux-connector-soap</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+```yaml
+flux:
+  connectors:
+    billing:
+      type: soap
+      timeout: 5s
+      settings:
+        wsdl: classpath:wsdl/billing.wsdl
+        endpoint: ${BILLING_ENDPOINT:https://billing.example.com/services}
+```
+
+The WSDL is read once at start-up, so a bad location or a port with no `soap:address` fails
+the application rather than the first call. An operation is then looked up by name, and the
+payload becomes the children of that operation's request element:
+
+```java
+registry.require("billing")
+        .execute(ConnectorRequest.of("GetSubscriber", Map.of("msisdn", "09120000000")));
+```
+
+```xml
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <req:GetSubscriber xmlns:req="http://example.com/subscriber">
+      <req:msisdn>09120000000</req:msisdn>
+    </req:GetSubscriber>
+  </soapenv:Body>
+</soapenv:Envelope>
+```
+
+A SOAP fault comes back as a **failed response with the fault string as its body**, not as an
+exception, so a gateway can branch on it the way it branches on an HTTP error. The same is
+true of an operation the WSDL does not declare.
+
+| Setting | Meaning |
+|---|---|
+| `wsdl` | required — an absolute URL or a classpath resource |
+| `endpoint` | overrides the `soap:address` in the WSDL, which is usually a leftover from another environment |
+| `service` | picks a service when the WSDL declares more than one |
+| `port` | picks a port when the service declares more than one |
+
+Both SOAP 1.1 and 1.2 are supported; which one is used is read from the binding. The
+connector builds envelopes and posts them itself, so the WSDL is the only thing it takes
+from CXF.
 
 ---
 
@@ -369,13 +428,11 @@ outside the core.
 
 ## Project status
 
-Version 0.1.0. The core, Kafka and Camunda modules are built and tested. What is deliberately
-not here yet:
+Version 0.1.0. The core, Kafka, SOAP and Camunda modules are built and tested. What is
+deliberately not here yet:
 
 - **Retry and circuit breaking.** Timeouts are enforced; retries are not. Wrap calls at the
   call site until this lands.
-- **SOAP connector.** XML, WSDL and XSD handling is not implemented. The extension point
-  exists; the connector does not.
 - **Metrics export.** The response carries its duration, but nothing publishes it to a
   registry yet.
 - **Connector generation.** The idea of generating a connector from an OpenAPI document is

@@ -16,6 +16,7 @@
   <modules>
     <module>flux-connector-core</module>
     <module>flux-connector-kafka</module>
+    <module>flux-connector-soap</module>
     <module>flux-bpmn-camunda</module>
     <module>flux-starter-autoconfigure</module>
     <module>flux-spring-boot-starter</module>
@@ -29,6 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring-boot.version>3.3.5</spring-boot.version>
     <camunda.version>7.22.0</camunda.version>
+    <cxf.version>4.0.5</cxf.version>
   </properties>
 
   <dependencyManagement>
@@ -64,6 +66,18 @@
         <groupId>io.github.navidzaare</groupId>
         <artifactId>flux-bpmn-camunda</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.navidzaare</groupId>
+        <artifactId>flux-connector-soap</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- WSDL model and parsing. The connector builds envelopes itself, so no
+           transport or frontend module is pulled in. -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-wsdl</artifactId>
+        <version>${cxf.version}</version>
       </dependency>
       <!-- Camunda BOM: manages camunda-engine and every other Camunda artifact -->
       <dependency>
