@@ -17,6 +17,26 @@ cd flux-platform
 
 The build runs every module's tests. It has to be green before a pull request is reviewed.
 
+## Working on a change
+
+Never commit to `main`, even for a one-line fix. Branch, then open a pull request:
+
+```bash
+git checkout -b add-example-connector
+# make your changes
+./mvnw clean verify
+git add .
+git commit -m "add a worked example connector"
+git push -u origin add-example-connector
+```
+
+GitHub then offers a **Compare & pull request** button on the repository page. Open the pull
+request against `main` and it will be reviewed there. Working on a branch means CI runs before
+the change lands, and if something needs reworking it can be done without unpicking `main`.
+
+If you would rather not push a branch to this repository, fork it and open the pull request
+from your fork instead. Both are welcome.
+
 ## Project layout
 
 | Module | Responsibility |
